@@ -13,6 +13,8 @@ dependencies = [
     "requests>=2.31.0",
     "matplotlib>=3.7.0",
     "folium>=0.15.0",
+    "polars>=1.33.1",
+    "tqdm>=4.67.1",
 ]
 
 [tool.setuptools.packages.find]

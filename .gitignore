@@ -35,6 +35,9 @@ Thumbs.db
 *.csv
 logs/
 
+# Scenario data output (large datasets, keep local only)
+scenario_data/
+
 # OSRM data files (keep local but don't track)
 osrm/bayern-latest.osm.pbf
 osrm/bayern-latest.osrm*

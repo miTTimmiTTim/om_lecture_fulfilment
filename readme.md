@@ -12,6 +12,7 @@ A Vehicle Routing Problem with Time Windows (VRPTW) solver for pharmacy delivery
 - **Accurate routing**: OSRM provides driving distances and durations with Bavaria coverage
 - **Time windows**: Configurable service hours for depot and clients
 - **Interactive visualization**: Matplotlib plots and Folium interactive maps
+- **Scenario analysis**: Generate optimization results for multiple parameter combinations for research and analysis
 
 ## Setup
 
@@ -71,7 +72,31 @@ Edit parameters in `src/vrptw/config.py`:
 - **Vehicles**: `vehicle_capacity`, `service_time_sec`, `vehicle_fixed_cost`
 - **Solver**: `initial_vehicle_count`, `auto_increase_vehicles`, `time_limit_sec`
 
-### Outputs
+### Scenario Analysis
+
+Generate optimization results for multiple parameter combinations:
+
+```bash
+# Generate all 135 scenarios (15 radii × 9 time windows)
+uv run python scenario_generator.py
+
+# Test run with only 4 scenarios
+uv run python scenario_generator.py --test-run
+
+# Resume interrupted run
+uv run python scenario_generator.py --resume
+
+# Limit maximum radius
+uv run python scenario_generator.py --max-radius 30
+```
+
+**Output**: Creates `scenario_data/` directory with:
+- `pharmacies.parquet`: All pharmacy data with distance calculations (Polars format)
+- `scenarios.csv`: Summary metrics for all scenarios
+- `routes/scenario_*.json`: Detailed route data with OSRM geometries for offline visualization
+- `completed.txt`: Checkpoint file for resumable execution
+
+### Standard Usage Outputs
 
 - Console summary with route details
 - `vrp_routes.png`: Static visualization
@@ -102,21 +127,25 @@ uvx mypy src/
 
 ```
 /
-├── main.py               # Entry point with path setup
-├── src/vrptw/           # Main package
-│   ├── config.py        # Configuration dataclass
-│   ├── solver.py        # OR-Tools VRPTW solver
-│   ├── utils.py         # Result formatting utilities
-│   ├── main.py          # Main execution logic
-│   ├── data/            # Data collection modules
-│   │   ├── overpass.py  # OpenStreetMap pharmacy fetching
-│   │   └── osrm.py      # OSRM distance matrices & routing
-│   └── visualization/   # Plotting modules
-│       ├── matplotlib_viz.py  # Static plots
-│       └── folium_viz.py      # Interactive maps
-├── tests/               # Test suite
-├── docker-compose.yml   # OSRM container setup
-└── osrm/               # OSRM data directory (Bavaria)
+├── main.py                    # Entry point with path setup
+├── scenario_generator.py     # Scenario analysis generator
+├── src/vrptw/                # Main package
+│   ├── config.py             # Configuration dataclass
+│   ├── solver.py             # OR-Tools VRPTW solver
+│   ├── utils.py              # Result formatting utilities
+│   ├── main.py               # Main execution logic
+│   ├── scenario_config.py    # Scenario parameter generation
+│   ├── scenario_storage.py   # Polars-based data storage
+│   ├── data/                 # Data collection modules
+│   │   ├── overpass.py       # OpenStreetMap pharmacy fetching
+│   │   └── osrm.py           # OSRM distance matrices & routing
+│   └── visualization/        # Plotting modules
+│       ├── matplotlib_viz.py # Static plots
+│       └── folium_viz.py     # Interactive maps
+├── tests/                    # Test suite (29 tests)
+├── scenario_data/            # Generated scenario analysis (gitignored)
+├── docker-compose.yml        # OSRM container setup
+└── osrm/                    # OSRM data directory (Bavaria)
 ```
 
 ## Key Features
@@ -125,6 +154,7 @@ uvx mypy src/
 - **Real-world routing**: OSRM integration provides accurate driving times and turn-by-turn directions
 - **Automatic optimization**: OR-Tools determines optimal vehicle count based on constraints
 - **Bavaria coverage**: Complete OSM data for accurate regional routing
+- **Scenario analysis**: Generate 135 scenarios (15 radii × 9 time windows) with Polars-based data storage
 
 ## Algorithm Details
 
@@ -144,3 +174,25 @@ Example results for Erlangen/Nuremberg region (50km radius):
 - **Total time**: ~115 hours
 - **Average stops**: 8.7 per vehicle
 - **Execution time**: ~107 seconds
+
+## Scenario Analysis
+
+The scenario generator creates comprehensive datasets for research and analysis:
+
+**Parameter Space**:
+- **Search radii**: 5-75km in 5km steps (15 values)
+- **Time windows**: Always start 07:00, vary length 2-10 hours (9 values)
+- **Total combinations**: 135 scenarios
+
+**Data Storage** (Polars-based for performance):
+- **pharmacies.parquet**: All pharmacy locations with distance calculations
+- **scenarios.csv**: Summary metrics (vehicles used, distances, execution times)
+- **routes/scenario_*.json**: Route geometries for offline visualization
+- **completed.txt**: Checkpoint system for resumable execution
+
+**Use Cases**:
+- Parameter sensitivity analysis
+- Time window impact studies
+- Geographic coverage optimization
+- Academic research and presentations
+- Visualization without OSRM dependency

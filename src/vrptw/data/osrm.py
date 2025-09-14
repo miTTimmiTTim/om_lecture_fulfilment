@@ -33,7 +33,7 @@ def get_distance_matrix_osrm(
     # Build coordinate list: depot first, then all pharmacies
     coords = [(depot_lon, depot_lat)]  # OSRM uses lon,lat format
     for pharmacy in pharmacies:
-        coords.append((pharmacy["lon"], pharmacy["lat"]))
+        coords.append((float(pharmacy["lon"]), float(pharmacy["lat"])))
 
     # Convert to OSRM coordinate string format
     coord_string = ";".join(f"{lon},{lat}" for lon, lat in coords)
