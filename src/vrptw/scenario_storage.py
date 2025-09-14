@@ -110,11 +110,11 @@ def collect_route_geometries(
             try:
                 # Get OSRM route geometry
                 geometry = get_route_geometry(
-                    osrm_url=osrm_url,
-                    start_lat=start_stop["lat"],
-                    start_lon=start_stop["lon"],
-                    end_lat=end_stop["lat"],
-                    end_lon=end_stop["lon"],
+                    osrm_url,
+                    start_stop["lat"],
+                    start_stop["lon"],
+                    end_stop["lat"],
+                    end_stop["lon"],
                 )
 
                 segment_data = {"start": start_stop, "end": end_stop, "geometry": geometry}
