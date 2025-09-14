@@ -1,6 +1,5 @@
 """Matplotlib-based static visualization for VRPTW solutions."""
 
-
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
