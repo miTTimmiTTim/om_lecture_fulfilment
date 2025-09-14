@@ -10,11 +10,14 @@ from .utils import summarize_result
 from .visualization import build_folium_map, plot_vrp_matplotlib
 
 
-def main(config: VRPConfig | None = None) -> VRPResult:
+def main(
+    config: VRPConfig | None = None, pharmacies_override: list[dict[str, str | float]] | None = None
+) -> VRPResult:
     """Execute complete VRPTW pipeline.
 
     Args:
         config: VRPTW configuration (uses default if None)
+        pharmacies_override: Pre-filtered pharmacy list (skips Overpass API if provided)
 
     Returns:
         VRPResult containing solution and statistics
@@ -34,15 +37,21 @@ def main(config: VRPConfig | None = None) -> VRPResult:
     start_time = time.time()
 
     try:
-        # Stage 1: Fetch pharmacies from Overpass API
-        print("\n1. Fetching pharmacies from OpenStreetMap...")
-        pharmacies = get_pharmacies_overpass(config.center_lat, config.center_lon, config.radius_km)
+        # Stage 1: Fetch pharmacies from Overpass API (or use override)
+        if pharmacies_override is not None:
+            print("\n1. Using provided pharmacy data...")
+            pharmacies = pharmacies_override
+            print(f"   → Using {len(pharmacies)} pre-filtered pharmacies")
+        else:
+            print("\n1. Fetching pharmacies from OpenStreetMap...")
+            pharmacies = get_pharmacies_overpass(
+                config.center_lat, config.center_lon, config.radius_km
+            )
+            print(f"   → Found {len(pharmacies)} pharmacies")
 
         if not pharmacies:
             print("ERROR: No pharmacies found in specified area")
             return VRPResult([], 0.0, 0, 0, status="NO_DATA")
-
-        print(f"   → Found {len(pharmacies)} pharmacies")
 
         # Stage 2: Build OSRM distance/time matrices
         print("\n2. Building OSRM distance/time matrices...")

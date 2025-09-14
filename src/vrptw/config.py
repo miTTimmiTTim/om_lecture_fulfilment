@@ -30,7 +30,7 @@ class VRPConfig:
     time_limit_sec: int = 20  # Search limit
 
     # Plotting
-    plot_png: bool = True
+    plot_png: bool = False
     plot_path: str = "vrp_routes.png"
     plot_show: bool = False
 
