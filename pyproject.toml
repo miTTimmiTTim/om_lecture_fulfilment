@@ -1,0 +1,30 @@
+[project]
+name = "vrptw"
+version = "0.1.0"
+description = "VRPTW solver for pharmacy delivery optimization using OR-Tools"
+readme = "README.md"
+authors = [
+    { name = "Nikolai Stein", email = "nikolai.stein86@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "ortools>=9.8.0",
+    "pandas>=2.0.0",
+    "requests>=2.31.0",
+    "matplotlib>=3.7.0",
+    "folium>=0.15.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv]
+dev-dependencies = [
+    "ruff>=0.6.0",
+    "pytest>=8.0.0",
+    "mypy>=1.8.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.15,<0.9.0"]
+build-backend = "uv_build"

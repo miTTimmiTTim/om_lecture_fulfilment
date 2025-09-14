@@ -1,0 +1,27 @@
+# Multi-stage Dockerfile for OSRM preprocessing and serving
+FROM osrm/osrm-backend:v5.27.1 as preprocessor
+
+# Copy OSM data
+COPY osrm/bayern-latest.osm.pbf /data/
+
+# Preprocess the data
+WORKDIR /data
+RUN osrm-extract -p /opt/car.lua bayern-latest.osm.pbf && \
+    osrm-partition bayern-latest.osrm && \
+    osrm-customize bayern-latest.osrm
+
+# Final stage - runtime
+FROM osrm/osrm-backend:v5.27.1
+
+# Copy preprocessed data from previous stage
+COPY --from=preprocessor /data/ /data/
+
+# Expose port
+EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:5000/route/v1/driving/11.088860,49.517037;11.00385983,49.496891?overview=false || exit 1
+
+# Start OSRM server
+CMD ["osrm-routed", "--algorithm", "mld", "--max-table-size", "20000", "/data/bayern-latest.osrm"]

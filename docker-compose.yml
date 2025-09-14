@@ -1,0 +1,19 @@
+services:
+  osrm:
+    image: osrm/osrm-backend
+    ports:
+      - "9001:5000"
+    volumes:
+      - "./osrm:/data"
+    command: ["osrm-routed", "--algorithm", "mld", "--max-table-size", "20000", "/data/bayern-latest.osrm"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/route/v1/driving/11.088860,49.517037;11.00385983,49.496891?overview=false"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+networks:
+  default:
+    name: vrptw-network
