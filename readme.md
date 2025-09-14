@@ -11,9 +11,7 @@ A Vehicle Routing Problem with Time Windows (VRPTW) solver for pharmacy delivery
 - **Real-world data**: Uses Overpass API to fetch pharmacy locations from OpenStreetMap
 - **Accurate routing**: OSRM provides driving distances and durations with Bavaria coverage
 - **Time windows**: Configurable service hours for depot and clients
-- **Interactive visualization**: Matplotlib plots and Folium interactive maps with dynamic colors
-- **Modular architecture**: Clean separation of concerns with proper testing
-- **Modern Python**: Uses uv for package management, ruff for linting, pytest for testing
+- **Interactive visualization**: Matplotlib plots and Folium interactive maps
 
 ## Setup
 
@@ -22,29 +20,6 @@ A Vehicle Routing Problem with Time Windows (VRPTW) solver for pharmacy delivery
 - Python 3.11+
 - Docker (for OSRM)
 - uv package manager
-
-### OSRM Data Setup (First Time Only)
-
-The project includes preprocessed OSRM data for Bavaria. If you need to rebuild from scratch:
-
-1. Download Bavaria OSM data:
-```bash
-mkdir -p osrm
-cd osrm
-wget http://download.geofabrik.de/europe/germany/bayern-latest.osm.pbf
-cd ..
-```
-
-2. Build OSRM data using Docker:
-```bash
-# Build the preprocessing image
-docker build -f Dockerfile.osrm -t osrm-bayern .
-
-# Extract preprocessed files
-docker run --rm -v $(pwd)/osrm:/data osrm-bayern cp -r /data/. /data/
-```
-
-**Note**: This preprocessing takes significant time (~30-60 minutes) and CPU resources.
 
 ### Installation
 
@@ -66,6 +41,8 @@ cd osrm
 wget http://download.geofabrik.de/europe/germany/bayern-latest.osm.pbf
 cd ..
 ```
+
+**Note**: The download is ~814MB and may take several minutes depending on your connection.
 
 4. Start OSRM server with Bavaria data:
 ```bash
@@ -144,12 +121,9 @@ uvx mypy src/
 
 ## Key Features
 
-- **Professional visualization**: Interactive Folium maps with warehouse/pharmacy icons and CartoDB Light styling
+- **Interactive visualization**: Folium maps with warehouse/pharmacy icons and CartoDB Light styling
 - **Real-world routing**: OSRM integration provides accurate driving times and turn-by-turn directions
-- **Dynamic optimization**: OR-Tools automatically determines optimal vehicle count
-- **Modern Python**: Uses `list[dict]`, `X | None` syntax and uv package management
-- **Clean architecture**: Modular design with proper separation of concerns
-- **Comprehensive testing**: Full test suite with API mocking
+- **Automatic optimization**: OR-Tools determines optimal vehicle count based on constraints
 - **Bavaria coverage**: Complete OSM data for accurate regional routing
 
 ## Algorithm Details
