@@ -147,7 +147,7 @@ Example performance for Erlangen/Nuremberg region:
 - **Quality tooling**: uv package management, ruff linting/formatting, comprehensive test suite
 
 ### Scenario Analysis Features
-- **Comprehensive parameter space**: 15 radii (5-75km) × 9 time windows (2-10h) × 5 service times (1-9min) = 675 scenarios
+- **Comprehensive parameter space**: 15 radii (5-75km) × 9 time windows (2-10h) × 10 service times (1-10min) = 1350 scenarios
 - **Polars-based storage**: High-performance DataFrames for efficient data processing
 - **Resumable execution**: Checkpoint system with `completed.txt` tracking
 - **Offline visualization**: Pre-computed OSRM geometries stored for later use without OSRM dependency

@@ -36,7 +36,7 @@ def generate_scenario_id(radius_km: float, client_tw_hours: int, service_time_se
 
 
 def generate_all_scenarios() -> list[ScenarioParams]:
-    """Generate all 675 scenario parameter combinations.
+    """Generate all 1350 scenario parameter combinations.
 
     Returns:
         List of ScenarioParams for all radius/time window/service time combinations
@@ -47,8 +47,8 @@ def generate_all_scenarios() -> list[ScenarioParams]:
     # Client time window lengths: 2-10 hours (9 values)
     tw_lengths = list(range(2, 11))
 
-    # Service times: 1-9 minutes in 2-minute steps (5 values)
-    service_times_sec = [60, 180, 300, 420, 540]  # 1, 3, 5, 7, 9 minutes
+    # Service times: 1-10 minutes in 1-minute steps (10 values)
+    service_times_sec = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]  # 1-10 minutes
 
     # Fixed parameters
     client_tw_start = 7 * 3600  # 07:00 in seconds

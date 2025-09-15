@@ -77,7 +77,7 @@ Edit parameters in `src/vrptw/config.py`:
 Generate optimization results for multiple parameter combinations:
 
 ```bash
-# Generate all 675 scenarios (15 radii × 9 time windows × 5 service times)
+# Generate all 1350 scenarios (15 radii × 9 time windows × 10 service times)
 uv run python scenario_generator.py
 
 # Test run with only 8 scenarios
@@ -163,7 +163,7 @@ The solver uses OR-Tools with:
 - **Time windows**: 07:00-18:00 for clients, 05:00-19:00 for depot
 - **Optimization**: Minimizes total travel time while respecting capacity and time constraints
 - **Real routing**: OSRM provides accurate driving times and distances
-- **Service time**: Configurable per pharmacy stop (1-9 minutes in scenario analysis)
+- **Service time**: Configurable per pharmacy stop (1-10 minutes in scenario analysis)
 
 ## Performance
 
@@ -182,8 +182,8 @@ The scenario generator creates comprehensive datasets for research and analysis:
 **Parameter Space**:
 - **Search radii**: 5-75km in 5km steps (15 values)
 - **Time windows**: Always start 07:00, vary length 2-10 hours (9 values)
-- **Service times**: 1, 3, 5, 7, 9 minutes per stop (5 values)
-- **Total combinations**: 675 scenarios
+- **Service times**: 1-10 minutes per stop in 1-minute steps (10 values)
+- **Total combinations**: 1350 scenarios
 
 **Data Storage** (Polars-based for performance):
 - **pharmacies.parquet**: All pharmacy locations with distance calculations
