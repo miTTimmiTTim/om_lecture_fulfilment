@@ -163,10 +163,11 @@ def initialize_scenario_data_directory(output_dir: Path) -> None:
         "parameters": {
             "radii": list(range(5, 80, 5)),
             "client_time_window_lengths_hours": list(range(2, 11)),
+            "service_times_sec": [60, 120, 180, 240, 300, 360, 420, 480, 540, 600],
             "client_time_window_start": "07:00",
             "depot_time_window": "05:00-19:00",
         },
-        "total_scenarios": 135,
+        "total_scenarios": 1350,
         "files": {
             "pharmacies.parquet": "All pharmacy locations with distance calculations",
             "scenarios.csv": "Summary metrics for all scenarios",
@@ -219,6 +220,7 @@ def store_scenario_result(
             "client_tw_end": scenario.client_tw_end,
             "depot_tw_start": scenario.depot_tw_start,
             "depot_tw_end": scenario.depot_tw_end,
+            "service_time_sec": scenario.service_time_sec,
         },
         "solution": route_geometries,
         "metadata": {
@@ -241,6 +243,7 @@ def store_scenario_result(
         "client_tw_end": scenario.client_tw_end,
         "depot_tw_start": scenario.depot_tw_start,
         "depot_tw_end": scenario.depot_tw_end,
+        "service_time_sec": scenario.service_time_sec,
         "pharmacies_count": pharmacies_count,
         "vehicles_used": result.vehicles_used,
         "total_distance_km": result.total_distance_km,

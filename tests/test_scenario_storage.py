@@ -78,7 +78,7 @@ class TestScenarioDataDirectory:
 
             assert "dataset" in metadata
             assert "total_scenarios" in metadata
-            assert metadata["total_scenarios"] == 135
+            assert metadata["total_scenarios"] == 1350
             assert "parameters" in metadata
 
 
@@ -163,6 +163,7 @@ class TestScenarioResultStorage:
             df = pl.read_csv(csv_file)
             assert len(df) == 1
             assert df["scenario_id"][0] == "10_04_06"
+            assert df["service_time_sec"][0] == 360
             assert df["vehicles_used"][0] == 1
             assert df["pharmacies_count"][0] == 25
 
@@ -174,6 +175,7 @@ class TestScenarioResultStorage:
                 route_data = json.load(f)
 
             assert route_data["scenario_id"] == "10_04_06"
+            assert route_data["parameters"]["service_time_sec"] == 360
             assert route_data["solution"]["vehicles_used"] == 1
 
 
