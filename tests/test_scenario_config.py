@@ -17,16 +17,18 @@ class TestScenarioParams:
     def test_scenario_params_creation(self):
         """Test ScenarioParams instantiation."""
         params = ScenarioParams(
-            scenario_id="10_04",
+            scenario_id="10_04_05",
             radius_km=10.0,
             client_tw_hours=4,
             client_tw_start=7 * 3600,
             client_tw_end=11 * 3600,
             depot_tw_start=5 * 3600,
             depot_tw_end=19 * 3600,
+            service_time_sec=300,
         )
 
-        assert params.scenario_id == "10_04"
+        assert params.scenario_id == "10_04_05"
+        assert params.service_time_sec == 300
         assert params.radius_km == 10.0
         assert params.client_tw_hours == 4
         assert params.client_tw_start == 7 * 3600
@@ -40,14 +42,14 @@ class TestScenarioIdGeneration:
 
     def test_generate_scenario_id(self):
         """Test scenario ID generation."""
-        assert generate_scenario_id(5, 2) == "05_02"
-        assert generate_scenario_id(75, 10) == "75_10"
-        assert generate_scenario_id(30, 6) == "30_06"
+        assert generate_scenario_id(5, 2, 60) == "05_02_01"
+        assert generate_scenario_id(75, 10, 600) == "75_10_10"
+        assert generate_scenario_id(30, 6, 300) == "30_06_05"
 
     def test_generate_scenario_id_formats(self):
         """Test scenario ID formatting with zero padding."""
-        assert generate_scenario_id(5, 2) == "05_02"  # Zero padding
-        assert generate_scenario_id(15, 10) == "15_10"  # No padding needed
+        assert generate_scenario_id(5, 2, 60) == "05_02_01"  # Zero padding
+        assert generate_scenario_id(15, 10, 480) == "15_10_08"  # No padding needed
 
 
 class TestScenarioGeneration:
@@ -57,8 +59,8 @@ class TestScenarioGeneration:
         """Test that correct number of scenarios are generated."""
         scenarios = generate_all_scenarios()
 
-        # 15 radii (5-75 in steps of 5) × 9 time windows (2-10 hours) = 135 scenarios
-        assert len(scenarios) == 135
+        # 15 radii (5-75 in steps of 5) × 9 time windows (2-10 hours) × 10 service times (1-10 min) = 1350 scenarios
+        assert len(scenarios) == 1350
 
     def test_generate_all_scenarios_radii(self):
         """Test scenario radii coverage."""
@@ -106,13 +108,14 @@ class TestVRPConfigCreation:
     def test_create_vrp_config_for_scenario(self):
         """Test VRP config creation from scenario params."""
         scenario = ScenarioParams(
-            scenario_id="20_06",
+            scenario_id="20_06_04",
             radius_km=20.0,
             client_tw_hours=6,
             client_tw_start=7 * 3600,
             client_tw_end=13 * 3600,
             depot_tw_start=5 * 3600,
             depot_tw_end=19 * 3600,
+            service_time_sec=240,
         )
 
         config = create_vrp_config_for_scenario(scenario)
@@ -124,25 +127,28 @@ class TestVRPConfigCreation:
         assert config.depot_tw_start == 5 * 3600
         assert config.depot_tw_end == 19 * 3600
 
+        # Service time should come from scenario
+        assert config.service_time_sec == 240
+
         # Base config parameters should be preserved
         base_config = VRPConfig()
         assert config.center_lat == base_config.center_lat
         assert config.center_lon == base_config.center_lon
         assert config.vehicle_capacity == base_config.vehicle_capacity
-        assert config.service_time_sec == base_config.service_time_sec
 
     def test_create_vrp_config_with_custom_base(self):
         """Test VRP config creation with custom base config."""
         custom_base = VRPConfig(center_lat=50.0, center_lon=10.0, vehicle_capacity=100)
 
         scenario = ScenarioParams(
-            scenario_id="15_04",
+            scenario_id="15_04_07",
             radius_km=15.0,
             client_tw_hours=4,
             client_tw_start=7 * 3600,
             client_tw_end=11 * 3600,
             depot_tw_start=5 * 3600,
             depot_tw_end=19 * 3600,
+            service_time_sec=420,
         )
 
         config = create_vrp_config_for_scenario(scenario, custom_base)
@@ -156,6 +162,7 @@ class TestVRPConfigCreation:
         assert config.radius_km == 15.0
         assert config.client_tw_start == 7 * 3600
         assert config.client_tw_end == 11 * 3600
+        assert config.service_time_sec == 420
 
 
 class TestScenarioFiltering:
@@ -165,8 +172,8 @@ class TestScenarioFiltering:
         """Test filtering scenarios by radius."""
         scenarios_10km = get_scenarios_by_radius(10)
 
-        # Should have 9 scenarios (one for each time window)
-        assert len(scenarios_10km) == 9
+        # Should have 90 scenarios (9 time windows × 10 service times)
+        assert len(scenarios_10km) == 90
 
         # All should have radius 10km
         for scenario in scenarios_10km:
@@ -180,8 +187,8 @@ class TestScenarioFiltering:
         """Test filtering scenarios by time window length."""
         scenarios_6h = get_scenarios_by_time_window(6)
 
-        # Should have 15 scenarios (one for each radius)
-        assert len(scenarios_6h) == 15
+        # Should have 150 scenarios (15 radii × 10 service times)
+        assert len(scenarios_6h) == 150
 
         # All should have 6-hour time window
         for scenario in scenarios_6h:

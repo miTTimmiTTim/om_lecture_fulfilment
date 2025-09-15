@@ -117,13 +117,14 @@ class TestScenarioResultStorage:
     def test_store_scenario_result_new_file(self):
         """Test storing scenario result when CSV doesn't exist."""
         scenario = ScenarioParams(
-            scenario_id="10_04",
+            scenario_id="10_04_06",
             radius_km=10.0,
             client_tw_hours=4,
             client_tw_start=7 * 3600,
             client_tw_end=11 * 3600,
             depot_tw_start=5 * 3600,
             depot_tw_end=19 * 3600,
+            service_time_sec=360,
         )
 
         result = VRPResult(
@@ -161,18 +162,18 @@ class TestScenarioResultStorage:
 
             df = pl.read_csv(csv_file)
             assert len(df) == 1
-            assert df["scenario_id"][0] == "10_04"
+            assert df["scenario_id"][0] == "10_04_06"
             assert df["vehicles_used"][0] == 1
             assert df["pharmacies_count"][0] == 25
 
             # Check JSON route file
-            route_file = output_dir / "routes" / "scenario_10_04.json"
+            route_file = output_dir / "routes" / "scenario_10_04_06.json"
             assert route_file.exists()
 
             with open(route_file) as f:
                 route_data = json.load(f)
 
-            assert route_data["scenario_id"] == "10_04"
+            assert route_data["scenario_id"] == "10_04_06"
             assert route_data["solution"]["vehicles_used"] == 1
 
 
