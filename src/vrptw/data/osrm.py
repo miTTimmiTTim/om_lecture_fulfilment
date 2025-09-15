@@ -72,12 +72,12 @@ def get_distance_matrix_osrm(
 
         return distance_df, duration_df
 
-    except requests.Timeout:
-        raise requests.RequestException(f"OSRM request timed out after {timeout}s")
+    except requests.Timeout as e:
+        raise requests.RequestException(f"OSRM request timed out after {timeout}s") from e
     except requests.RequestException as e:
-        raise requests.RequestException(f"OSRM request failed: {e}")
+        raise requests.RequestException(f"OSRM request failed: {e}") from e
     except (KeyError, TypeError, IndexError) as e:
-        raise ValueError(f"Failed to parse OSRM response: {e}")
+        raise ValueError(f"Failed to parse OSRM response: {e}") from e
 
 
 def get_route_geometry(

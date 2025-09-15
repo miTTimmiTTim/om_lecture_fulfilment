@@ -70,9 +70,9 @@ def get_pharmacies_overpass(
 
         return pharmacies
 
-    except requests.Timeout:
-        raise requests.RequestException(f"Overpass API request timed out after {timeout}s")
+    except requests.Timeout as e:
+        raise requests.RequestException(f"Overpass API request timed out after {timeout}s") from e
     except requests.RequestException as e:
-        raise requests.RequestException(f"Overpass API request failed: {e}")
+        raise requests.RequestException(f"Overpass API request failed: {e}") from e
     except (KeyError, TypeError) as e:
-        raise ValueError(f"Failed to parse Overpass API response: {e}")
+        raise ValueError(f"Failed to parse Overpass API response: {e}") from e

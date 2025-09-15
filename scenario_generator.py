@@ -106,7 +106,7 @@ def main():
     parser.add_argument(
         "--test-run",
         action="store_true",
-        help="Run test with only 4 scenarios (2 radii × 2 time windows)",
+        help="Run test with only 8 scenarios (2 radii × 2 time windows × 2 service times)",
     )
     parser.add_argument(
         "--resume", action="store_true", help="Resume from previously completed scenarios"
@@ -134,25 +134,27 @@ def main():
     # Generate scenario list
     if args.test_run:
         print("\n🧪 Test run mode: Limited scenarios")
-        # Test run: Only 2 radii × 2 time windows = 4 scenarios
+        # Test run: 2 radii × 2 time windows × 2 service times = 8 scenarios
         from vrptw.scenario_config import ScenarioParams, generate_scenario_id
 
         scenarios = []
         for radius in [10, 30]:  # 2 radii
             for tw_hours in [4, 8]:  # 2 time windows
-                client_tw_start = 7 * 3600
-                client_tw_end = client_tw_start + (tw_hours * 3600)
-                scenarios.append(
-                    ScenarioParams(
-                        scenario_id=generate_scenario_id(radius, tw_hours),
-                        radius_km=radius,
-                        client_tw_hours=tw_hours,
-                        client_tw_start=client_tw_start,
-                        client_tw_end=client_tw_end,
-                        depot_tw_start=5 * 3600,
-                        depot_tw_end=19 * 3600,
+                for service_time in [60, 540]:  # 2 service times: 1min, 9min
+                    client_tw_start = 7 * 3600
+                    client_tw_end = client_tw_start + (tw_hours * 3600)
+                    scenarios.append(
+                        ScenarioParams(
+                            scenario_id=generate_scenario_id(radius, tw_hours, service_time),
+                            radius_km=radius,
+                            client_tw_hours=tw_hours,
+                            client_tw_start=client_tw_start,
+                            client_tw_end=client_tw_end,
+                            depot_tw_start=5 * 3600,
+                            depot_tw_end=19 * 3600,
+                            service_time_sec=service_time,
+                        )
                     )
-                )
     else:
         scenarios = generate_all_scenarios()
         # Filter by max radius if specified
