@@ -35,5 +35,5 @@ class VRPConfig:
     plot_show: bool = False
 
     # Interactive map
-    folium_map: bool = True  # Set True to generate interactive map
+    folium_map: bool = False  # Set True to generate interactive map
     folium_path: str = "vrp_routes.html"

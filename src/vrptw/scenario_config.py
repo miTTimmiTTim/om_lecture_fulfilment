@@ -17,26 +17,29 @@ class ScenarioParams:
     client_tw_end: int  # seconds since midnight
     depot_tw_start: int  # seconds since midnight
     depot_tw_end: int  # seconds since midnight
+    service_time_sec: int  # service time per stop in seconds
 
 
-def generate_scenario_id(radius_km: float, client_tw_hours: int) -> str:
+def generate_scenario_id(radius_km: float, client_tw_hours: int, service_time_sec: int) -> str:
     """Generate scenario ID from parameters.
 
     Args:
         radius_km: Search radius in kilometers
         client_tw_hours: Client time window length in hours
+        service_time_sec: Service time per stop in seconds
 
     Returns:
-        Scenario ID in format 'RR_HH' (e.g., '05_02', '75_10')
+        Scenario ID in format 'RR_HH_SS' (e.g., '05_02_01', '75_10_09')
     """
-    return f"{int(radius_km):02d}_{client_tw_hours:02d}"
+    service_time_min = service_time_sec // 60
+    return f"{int(radius_km):02d}_{client_tw_hours:02d}_{service_time_min:02d}"
 
 
 def generate_all_scenarios() -> list[ScenarioParams]:
-    """Generate all 135 scenario parameter combinations.
+    """Generate all 1350 scenario parameter combinations.
 
     Returns:
-        List of ScenarioParams for all radius/time window combinations
+        List of ScenarioParams for all radius/time window/service time combinations
     """
     # Search radii: 5-75km in 5km steps (15 values)
     radii = list(range(5, 80, 5))
@@ -44,15 +47,18 @@ def generate_all_scenarios() -> list[ScenarioParams]:
     # Client time window lengths: 2-10 hours (9 values)
     tw_lengths = list(range(2, 11))
 
+    # Service times: 1-10 minutes in 1-minute steps (10 values)
+    service_times_sec = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]  # 1-10 minutes
+
     # Fixed parameters
     client_tw_start = 7 * 3600  # 07:00 in seconds
     depot_tw_start = 5 * 3600  # 05:00 in seconds
     depot_tw_end = 19 * 3600  # 19:00 in seconds
 
     scenarios = []
-    for radius, tw_hours in itertools.product(radii, tw_lengths):
+    for radius, tw_hours, service_time in itertools.product(radii, tw_lengths, service_times_sec):
         client_tw_end = client_tw_start + (tw_hours * 3600)
-        scenario_id = generate_scenario_id(radius, tw_hours)
+        scenario_id = generate_scenario_id(radius, tw_hours, service_time)
 
         scenarios.append(
             ScenarioParams(
@@ -63,6 +69,7 @@ def generate_all_scenarios() -> list[ScenarioParams]:
                 client_tw_end=client_tw_end,
                 depot_tw_start=depot_tw_start,
                 depot_tw_end=depot_tw_end,
+                service_time_sec=service_time,
             )
         )
 
@@ -95,9 +102,10 @@ def create_vrp_config_for_scenario(
         client_tw_end=scenario.client_tw_end,
         depot_tw_start=scenario.depot_tw_start,
         depot_tw_end=scenario.depot_tw_end,
+        # Service time from scenario (key change!)
+        service_time_sec=scenario.service_time_sec,
         # Keep all other parameters from base config
         vehicle_capacity=base_config.vehicle_capacity,
-        service_time_sec=base_config.service_time_sec,
         vehicle_fixed_cost=base_config.vehicle_fixed_cost,
         initial_vehicle_count=base_config.initial_vehicle_count,
         auto_increase_vehicles=base_config.auto_increase_vehicles,
@@ -121,6 +129,7 @@ def get_scenario_summary() -> str:
 
     radii = sorted(set(s.radius_km for s in scenarios))
     tw_lengths = sorted(set(s.client_tw_hours for s in scenarios))
+    service_times = sorted(set(s.service_time_sec for s in scenarios))
 
     summary = f"""VRPTW Scenario Generator Summary:
 
@@ -135,12 +144,16 @@ Client Time Windows: {len(tw_lengths)} values
   - Lengths: {tw_lengths} hours
   - End times: 09:00 to 17:00
 
+Service Times: {len(service_times)} values
+  - Range: {min(service_times) // 60}-{max(service_times) // 60} minutes
+  - Values: {[t // 60 for t in service_times]} minutes
+
 Depot Time Windows: Fixed
   - Start: 05:00
   - End: 19:00
 
-Scenario ID Format: 'radius_hours' (e.g., '05_02', '75_10')
-Expected Runtime: 1-4 hours (30-120s per scenario)
+Scenario ID Format: 'radius_hours_servicemins' (e.g., '05_02_01', '75_10_09')
+Expected Runtime: 5-20 hours ({len(scenarios)} scenarios)
 """
 
     return summary
