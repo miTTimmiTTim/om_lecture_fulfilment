@@ -11,8 +11,7 @@ app = marimo.App(
 
 @app.cell(hide_code=True)
 def _():
-    from pathlib import Path
-    import os
+    import sys
 
     GH_USER = "miTTimmiTTim"
     GH_REPO = "om_lecture_fulfilment"
@@ -23,20 +22,23 @@ def _():
         return f"https://raw.githubusercontent.com/{GH_USER}/{GH_REPO}/{BRANCH}/{path}"
 
     # Detect WASM by checking platform (not micropip - it can be installed in regular Python!)
-    import sys
     in_wasm = sys.platform == "emscripten" or hasattr(sys, "_emscripten_info")
 
-    # FORCE local mode for DSS course - hardcoded path
-    # This ensures we always use local data when running on Tim's machine
-    LOCAL_BASE = Path("/Users/timlachner/Library/CloudStorage/OneDrive-Personal/Work/Teaching/DSS")
-    local_data_dir = LOCAL_BASE / "apps" / "public" / "vrptw" / "data"
-    local_img_dir = LOCAL_BASE / "apps" / "public" / "vrptw" / "images"
+    # Check for local data directory (only if NOT in WASM)
+    use_local = False
+    local_data_dir = None
+    local_img_dir = None
 
-    # Use local if the directory exists and we're not in WASM
-    use_local = local_data_dir.exists() and not in_wasm
+    if not in_wasm:
+        from pathlib import Path
+        # FORCE local mode for DSS course - hardcoded path
+        LOCAL_BASE = Path("/Users/timlachner/Library/CloudStorage/OneDrive-Personal/Work/Teaching/DSS")
+        local_data_dir = LOCAL_BASE / "apps" / "public" / "vrptw" / "data"
+        local_img_dir = LOCAL_BASE / "apps" / "public" / "vrptw" / "images"
+        use_local = local_data_dir.exists()
+        print(f"Local data dir exists: {local_data_dir.exists()}")
 
     print(f"Detection: use_local={use_local}, in_wasm={in_wasm}")
-    print(f"Local data dir exists: {local_data_dir.exists()}")
 
     class DataURLs:
         pass  # Placeholder, will be set below
