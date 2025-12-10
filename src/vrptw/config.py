@@ -7,10 +7,10 @@ from dataclasses import dataclass
 class VRPConfig:
     """Configuration class for VRPTW solver parameters."""
 
-    # Geography / data collection
-    center_lat: float = 49.504896
-    center_lon: float = 11.015822
-    radius_km: float = 50
+    # Geography / data collection - Würzburg-Heuchelhof (Getränke Fritze depot)
+    center_lat: float = 49.7571
+    center_lon: float = 9.9195
+    radius_km: float = 10  # Würzburg city center (~10km radius)
     osrm_url: str = "http://127.0.0.1:9001"
 
     # Time windows (seconds from midnight)

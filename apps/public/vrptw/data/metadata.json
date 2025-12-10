@@ -1,6 +1,6 @@
 {
   "dataset": "VRPTW Scenario Analysis Dataset",
-  "created": "2025-12-09T14:32:03.684781",
+  "created": "2025-12-09T17:29:04.657187",
   "description": "Vehicle Routing Problem with Time Windows optimization results for multiple scenarios",
   "parameters": {
     "radii": [
@@ -48,7 +48,7 @@
   },
   "total_scenarios": 1350,
   "files": {
-    "pharmacies.parquet": "All pharmacy locations with distance calculations",
+    "venues.parquet": "All venue locations with distance calculations",
     "scenarios.csv": "Summary metrics for all scenarios",
     "routes/scenario_*.json": "Detailed route data with OSRM geometries",
     "completed.txt": "Checkpoint file for resumable execution"

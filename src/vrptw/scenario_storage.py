@@ -169,7 +169,7 @@ def initialize_scenario_data_directory(output_dir: Path) -> None:
         },
         "total_scenarios": 1350,
         "files": {
-            "pharmacies.parquet": "All pharmacy locations with distance calculations",
+            "venues.parquet": "All venue locations with distance calculations",
             "scenarios.csv": "Summary metrics for all scenarios",
             "routes/scenario_*.json": "Detailed route data with OSRM geometries",
             "completed.txt": "Checkpoint file for resumable execution",
@@ -181,15 +181,15 @@ def initialize_scenario_data_directory(output_dir: Path) -> None:
 
 
 def store_pharmacies_data(df_pharmacies: pl.DataFrame, output_dir: Path) -> None:
-    """Store pharmacy data as Parquet file.
+    """Store venue data as Parquet file.
 
     Args:
-        df_pharmacies: Polars DataFrame with pharmacy data
+        df_pharmacies: Polars DataFrame with venue data
         output_dir: Output directory
     """
-    output_path = output_dir / "pharmacies.parquet"
+    output_path = output_dir / "venues.parquet"
     df_pharmacies.write_parquet(output_path)
-    print(f"Stored pharmacy data: {output_path} ({len(df_pharmacies)} pharmacies)")
+    print(f"Stored venue data: {output_path} ({len(df_pharmacies)} venues)")
 
 
 def store_scenario_result(

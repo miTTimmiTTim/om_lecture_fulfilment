@@ -100,8 +100,8 @@ def main():
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="scenario_data",
-        help="Output directory for scenario data (default: scenario_data)",
+        default="apps/public/vrptw/data",
+        help="Output directory for scenario data (default: apps/public/vrptw/data)",
     )
     parser.add_argument(
         "--test-run",

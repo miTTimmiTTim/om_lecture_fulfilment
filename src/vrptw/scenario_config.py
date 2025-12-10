@@ -47,8 +47,8 @@ def generate_all_scenarios() -> list[ScenarioParams]:
     # Client time window lengths: 2-10 hours (9 values)
     tw_lengths = list(range(2, 11))
 
-    # Service times: 1-10 minutes in 1-minute steps (10 values)
-    service_times_sec = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]  # 1-10 minutes
+    # Service times: 5-30 minutes in 5-minute steps (6 values) - realistic for drinks delivery
+    service_times_sec = [300, 600, 900, 1200, 1500, 1800]  # 5, 10, 15, 20, 25, 30 minutes
 
     # Fixed parameters
     client_tw_start = 7 * 3600  # 07:00 in seconds
