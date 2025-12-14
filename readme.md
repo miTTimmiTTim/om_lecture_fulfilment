@@ -4,7 +4,13 @@
 ![OR-Tools](https://img.shields.io/badge/OR--Tools-9.14+-green.svg)
 ![uv](https://img.shields.io/badge/uv-package%20manager-orange.svg)
 
-A Vehicle Routing Problem with Time Windows (VRPTW) solver for pharmacy delivery optimization using OR-Tools, real-world geographic data from OpenStreetMap, and routing from OSRM.
+A Vehicle Routing Problem with Time Windows (VRPTW) solver using OR-Tools, real-world geographic data from OpenStreetMap, and routing from OSRM.
+
+## DSS Lecture Use Case: Würzburg Drinks Delivery
+
+This fork is used for the **Decision Support Systems (DSS)** lecture. The scenario demonstrates route optimization for a drinks delivery service in Würzburg, Germany, delivering to bars and restaurants.
+
+**Interactive Demo**: The marimo notebook in `apps/public/vrptw/vehicle_routing.py` can be run on [molab](https://marimo.io/cloud) - just upload the file and it will fetch all data from this repository automatically.
 
 ## Features
 
@@ -26,7 +32,7 @@ A Vehicle Routing Problem with Time Windows (VRPTW) solver for pharmacy delivery
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/NikoStein/om_lecture_fulfilment.git
+git clone https://github.com/miTTimmiTTim/om_lecture_fulfilment.git
 cd om_lecture_fulfilment
 ```
 
