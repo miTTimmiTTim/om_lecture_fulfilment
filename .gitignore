@@ -35,6 +35,10 @@ Thumbs.db
 *.csv
 logs/
 
+# Exception: Include marimo app assets
+!apps/public/vrptw/images/*.png
+!apps/public/vrptw/data/*.csv
+
 # Scenario data output (large datasets, keep local only)
 scenario_data/
 

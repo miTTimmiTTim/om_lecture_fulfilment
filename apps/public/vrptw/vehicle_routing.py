@@ -21,44 +21,21 @@ def _():
         path = "/".join(parts)
         return f"https://raw.githubusercontent.com/{GH_USER}/{GH_REPO}/{BRANCH}/{path}"
 
-    # Detect WASM by checking platform (not micropip - it can be installed in regular Python!)
+    # Detect WASM by checking platform (molab runs in WebAssembly)
     in_wasm = sys.platform == "emscripten" or hasattr(sys, "_emscripten_info")
 
-    # Check for local data directory (only if NOT in WASM)
-    use_local = False
-    local_data_dir = None
-    local_img_dir = None
-
-    if not in_wasm:
-        from pathlib import Path
-        # FORCE local mode for DSS course - hardcoded path
-        LOCAL_BASE = Path("/Users/timlachner/Library/CloudStorage/OneDrive-Personal/Work/Teaching/DSS")
-        local_data_dir = LOCAL_BASE / "apps" / "public" / "vrptw" / "data"
-        local_img_dir = LOCAL_BASE / "apps" / "public" / "vrptw" / "images"
-        use_local = local_data_dir.exists()
-        print(f"Local data dir exists: {local_data_dir.exists()}")
-
-    print(f"Detection: use_local={use_local}, in_wasm={in_wasm}")
+    print(f"Detection: in_wasm={in_wasm}")
 
     class DataURLs:
         pass  # Placeholder, will be set below
 
-    if use_local:
-        # Local development mode - use absolute paths
-        DataURLs.BASE = str(local_data_dir)
-        DataURLs.IMG_BASE = str(local_img_dir)
-        DataURLs.SCENARIOS = f"{DataURLs.BASE}/scenarios.csv"
-        DataURLs.VENUES = f"{DataURLs.BASE}/venues.parquet"
-        DataURLs.METADATA = f"{DataURLs.BASE}/metadata.json"
-        DataURLs.ROUTES_DIR = f"{DataURLs.BASE}/routes"
-    else:
-        # WASM/deployed mode - use GitHub raw URLs for data files
-        DataURLs.BASE = raw_url("apps", "public", "vrptw", "data")
-        DataURLs.IMG_BASE = "public/vrptw/images"  # Images work with relative paths in WASM
-        DataURLs.SCENARIOS = f"{DataURLs.BASE}/scenarios.csv"
-        DataURLs.VENUES = f"{DataURLs.BASE}/venues.parquet"
-        DataURLs.METADATA = f"{DataURLs.BASE}/metadata.json"
-        DataURLs.ROUTES_DIR = f"{DataURLs.BASE}/routes"
+    # Always use GitHub raw URLs (works for both molab WASM and local Python)
+    DataURLs.BASE = raw_url("apps", "public", "vrptw", "data")
+    DataURLs.IMG_BASE = raw_url("apps", "public", "vrptw", "images")
+    DataURLs.SCENARIOS = f"{DataURLs.BASE}/scenarios.csv"
+    DataURLs.VENUES = f"{DataURLs.BASE}/venues.parquet"
+    DataURLs.METADATA = f"{DataURLs.BASE}/metadata.json"
+    DataURLs.ROUTES_DIR = f"{DataURLs.BASE}/routes"
 
     print(f"Using BASE: {DataURLs.BASE}")
     print(f"Using IMG_BASE: {DataURLs.IMG_BASE}")
